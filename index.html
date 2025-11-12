@@ -1,62 +1,120 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Чебан Даниил — О себе</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background: linear-gradient(180deg, #f9fafb 0%, #e0f2fe 100%);
-      min-height: 100vh;
-      font-family: "Inter", sans-serif;
-    }
-    .fade-in {
-      animation: fade 0.8s ease-in-out;
-    }
-    @keyframes fade {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Чебан Даниил — Школьное портфолио</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 100%); font-family: "Inter", sans-serif; }
+  .fade-in { animation: fade 0.8s ease-in-out; }
+  @keyframes fade { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+  .tab { cursor:pointer; padding:.5rem 1rem; border-radius:.5rem; transition:.2s; }
+  .tab-active { background:#0284c7; color:white; }
+  .skill-bar { height:12px; border-radius:999px; background:linear-gradient(90deg,#06b6d4,#2563eb); }
+</style>
 </head>
-<body class="flex items-center justify-center p-6">
-  <main class="bg-white max-w-2xl w-full p-8 rounded-2xl shadow-lg fade-in">
-    <h1 class="text-3xl font-extrabold text-center mb-6 text-sky-700">Чебан Даниил</h1>
+<body class="min-h-screen flex items-center justify-center p-6">
 
-    <section class="mb-6">
-      <h2 class="text-xl font-semibold text-sky-600 mb-2">Обо мне</h2>
-      <p class="text-gray-700 leading-relaxed">
-        Привет! Меня зовут Даниил, мне 13 лет. Я увлекаюсь программированием и люблю узнавать что-то новое о технологиях. 
-        В свободное время тренируюсь, играю в футбол и иногда создаю небольшие проекты на компьютере.
-      </p>
-    </section>
+<main class="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-lg fade-in">
 
-    <section class="mb-6">
-      <h2 class="text-xl font-semibold text-sky-600 mb-2">Что я умею</h2>
-      <ul class="list-disc list-inside text-gray-700 space-y-1">
-        <li>Знаю немного <strong>Python</strong> — умею писать простые программы.</li>
-        <li>Изучаю <strong>Node.js</strong> и основы JavaScript.</li>
-        <li>Пробовал создавать сайты с помощью <strong>HTML</strong> и <strong>CSS</strong>.</li>
-        <li>Понимаю, как работает компьютер и Интернет.</li>
-      </ul>
-    </section>
+  <h1 class="text-3xl font-extrabold text-center mb-6 text-sky-700">Чебан Даниил</h1>
+  <p class="text-center text-gray-600 mb-6">13 лет — школьное портфолио, программирование, футбол, проекты</p>
 
-    <section class="mb-6">
-      <h2 class="text-xl font-semibold text-sky-600 mb-2">Мои увлечения</h2>
-      <p class="text-gray-700 leading-relaxed">
-        Помимо программирования, я занимаюсь футболом — тренируюсь регулярно и стараюсь становиться лучше.
-        Ещё мне нравится разбираться в играх и создавать свои небольшие проекты.
-      </p>
-    </section>
+  <!-- Tabs -->
+  <div class="flex justify-center gap-2 mb-6">
+    <div class="tab tab-active" data-tab="about">Обо мне</div>
+    <div class="tab" data-tab="skills">Навыки</div>
+    <div class="tab" data-tab="projects">Проекты</div>
+    <div class="tab" data-tab="football">Футбол</div>
+  </div>
 
-    <footer class="text-center text-gray-500 text-sm mt-8">
-      © <span id="year"></span> Чебан Даниил — школьный проект
-    </footer>
-  </main>
+  <!-- Sections -->
+  <section id="about" class="tab-content">
+    <h2 class="text-xl font-semibold text-sky-600 mb-2">Обо мне</h2>
+    <p class="text-gray-700 leading-relaxed">
+      Привет! Меня зовут Даниил, мне 13 лет. Люблю программировать и создавать свои проекты. 
+      Также увлекаюсь футболом и стараюсь развиваться в спорте и учебе.
+    </p>
+  </section>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <section id="skills" class="tab-content hidden">
+    <h2 class="text-xl font-semibold text-sky-600 mb-3">Навыки</h2>
+    <div class="space-y-3">
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span>HTML / CSS / JS</span><span>85%</span></div>
+        <div class="w-full bg-slate-200 rounded"><div class="skill-bar" style="width:85%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span>Node.js</span><span>55%</span></div>
+        <div class="w-full bg-slate-200 rounded"><div class="skill-bar" style="width:55%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span>Python</span><span>45%</span></div>
+        <div class="w-full bg-slate-200 rounded"><div class="skill-bar" style="width:45%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between text-sm mb-1"><span>Git / GitHub</span><span>50%</span></div>
+        <div class="w-full bg-slate-200 rounded"><div class="skill-bar" style="width:50%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="tab-content hidden">
+    <h2 class="text-xl font-semibold text-sky-600 mb-3">Проекты</h2>
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div class="p-4 border rounded">
+        <h3 class="font-medium">Личный сайт</h3>
+        <p class="text-sm text-gray-600 mt-1">Простой сайт на GitHub Pages — это мой первый проект.</p>
+      </div>
+      <div class="p-4 border rounded">
+        <h3 class="font-medium">Бот для задач</h3>
+        <p class="text-sm text-gray-600 mt-1">Бот на Node.js, который помогает автоматизировать домашку и тесты.</p>
+      </div>
+      <div class="p-4 border rounded">
+        <h3 class="font-medium">Мини-игры</h3>
+        <p class="text-sm text-gray-600 mt-1">Пробую писать маленькие игры на Python и JS.</p>
+      </div>
+      <div class="p-4 border rounded">
+        <h3 class="font-medium">Учебные проекты</h3>
+        <p class="text-sm text-gray-600 mt-1">Разные школьные проекты с использованием HTML, CSS, JS.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="football" class="tab-content hidden">
+    <h2 class="text-xl font-semibold text-sky-600 mb-3">Футбол</h2>
+    <p class="text-gray-700 leading-relaxed">
+      Люблю играть в футбол, тренируюсь 3 раза в неделю, работаю над дриблингом и ударами. 
+      Любимая позиция — нападающий.
+    </p>
+    <ul class="mt-3 flex gap-2 text-sm flex-wrap">
+      <li class="px-3 py-1 border rounded bg-sky-100">Тренировки: 3× в неделю</li>
+      <li class="px-3 py-1 border rounded bg-sky-100">Позиция: нападающий</li>
+      <li class="px-3 py-1 border rounded bg-sky-100">Любимая команда: школьная команда</li>
+    </ul>
+  </section>
+
+  <footer class="text-center text-gray-500 text-sm mt-6">
+    © <span id="year"></span> Чебан Даниил — школьное портфолио
+  </footer>
+</main>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Tabs
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('tab-active'));
+      tab.classList.add('tab-active');
+      contents.forEach(c => c.classList.add('hidden'));
+      document.getElementById(tab.dataset.tab).classList.remove('hidden');
+    });
+  });
+</script>
+
 </body>
 </html>
