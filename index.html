@@ -7,19 +7,26 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   body { background: linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 100%); font-family: "Inter", sans-serif; }
-  .fade-in { animation: fade 0.8s ease-in-out; }
+  .fade-in { animation: fade 0.7s ease-in-out; }
   @keyframes fade { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
-  .tab { cursor:pointer; padding:.5rem 1rem; border-radius:.5rem; transition:.2s; }
+  .tab { cursor:pointer; padding:.5rem 1rem; border-radius:.5rem; transition:.18s; user-select:none }
   .tab-active { background:#0284c7; color:white; }
   .skill-bar { height:12px; border-radius:999px; background:linear-gradient(90deg,#06b6d4,#2563eb); }
+  /* мини-стили для игры */
+  .game-area { width:100%; max-width:520px; height:320px; background:linear-gradient(180deg,#ffffff,#f1f5f9); border-radius:12px; border:1px solid #e2e8f0; position:relative; margin:auto; overflow:hidden; }
+  .target { width:56px; height:56px; border-radius:999px; background:radial-gradient(circle at 30% 30%, #fffbeb, #fb923c); display:flex; align-items:center; justify-content:center; font-weight:700; color:#92400e; position:absolute; cursor:pointer; box-shadow:0 6px 18px rgba(15,23,42,0.12); transform:scale(1); transition:transform .12s; }
+  .btn { padding:.45rem .8rem; border-radius:.6rem; border:1px solid #0ea5e9; background:white; cursor:pointer; }
+  .grid-photos { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+  .photo-item img { width:100%; height:120px; object-fit:cover; border-radius:8px; border:1px solid #e6edf7; }
+  .muted { color:#64748b }
 </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
 
-<main class="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-lg fade-in">
+<main class="max-w-3xl w-full bg-white p-7 rounded-2xl shadow-lg fade-in">
 
-  <h1 class="text-3xl font-extrabold text-center mb-6 text-sky-700">Чебан Даниил</h1>
-  <p class="text-center text-gray-600 mb-6">13 лет — школьное портфолио, программирование, футбол, проекты</p>
+  <h1 class="text-3xl font-extrabold text-center mb-3 text-sky-700">Чебан Даниил</h1>
+  <p class="text-center text-gray-600 mb-6">13 лет — школьное портфолио: код, игры, ИИ, футбол</p>
 
   <!-- Tabs -->
   <div class="flex justify-center gap-2 mb-6">
@@ -27,14 +34,16 @@
     <div class="tab" data-tab="skills">Навыки</div>
     <div class="tab" data-tab="projects">Проекты</div>
     <div class="tab" data-tab="football">Футбол</div>
+    <div class="tab" data-tab="games">Игры</div>
+    <div class="tab" data-tab="ai">ИИ</div>
   </div>
 
   <!-- Sections -->
   <section id="about" class="tab-content">
     <h2 class="text-xl font-semibold text-sky-600 mb-2">Обо мне</h2>
     <p class="text-gray-700 leading-relaxed">
-      Привет! Меня зовут Даниил, мне 13 лет. Люблю программировать и создавать свои проекты. 
-      Также увлекаюсь футболом и стараюсь развиваться в спорте и учебе.
+      Привет! Меня зовут Даниил, мне 13 лет. Люблю программировать, создавать простые проекты и играть в футбол.
+      Это школьное портфолио — коротко про навыки, проекты, игры и ИИ-эксперименты.
     </p>
   </section>
 
@@ -65,19 +74,19 @@
     <div class="grid sm:grid-cols-2 gap-4">
       <div class="p-4 border rounded">
         <h3 class="font-medium">Личный сайт</h3>
-        <p class="text-sm text-gray-600 mt-1">Простой сайт на GitHub Pages — это мой первый проект.</p>
+        <p class="text-sm text-gray-600 mt-1">Этот самый сайт на GitHub Pages — деплой и дизайн.</p>
       </div>
       <div class="p-4 border rounded">
         <h3 class="font-medium">Бот для задач</h3>
-        <p class="text-sm text-gray-600 mt-1">Бот на Node.js, который помогает автоматизировать домашку и тесты.</p>
+        <p class="text-sm text-gray-600 mt-1">Простой бот на Node.js, помогает решать домашки.</p>
       </div>
       <div class="p-4 border rounded">
         <h3 class="font-medium">Мини-игры</h3>
-        <p class="text-sm text-gray-600 mt-1">Пробую писать маленькие игры на Python и JS.</p>
+        <p class="text-sm text-gray-600 mt-1">Игры на JS прямо в браузере — учусь делать интерактив.</p>
       </div>
       <div class="p-4 border rounded">
         <h3 class="font-medium">Учебные проекты</h3>
-        <p class="text-sm text-gray-600 mt-1">Разные школьные проекты с использованием HTML, CSS, JS.</p>
+        <p class="text-sm text-gray-600 mt-1">Разные школьные проекты с HTML/CSS/JS и Python.</p>
       </div>
     </div>
   </section>
@@ -85,14 +94,45 @@
   <section id="football" class="tab-content hidden">
     <h2 class="text-xl font-semibold text-sky-600 mb-3">Футбол</h2>
     <p class="text-gray-700 leading-relaxed">
-      Люблю играть в футбол, тренируюсь 3 раза в неделю, работаю над дриблингом и ударами. 
-      Любимая позиция — нападающий, хотя почему то всегда меня ставят в защиту.
+      Тренируюсь 3 раза в неделю, работаю над дриблингом, пасом и тактикой. Любимая позиция — нападающий/защита (иногда ставят в защиту).
     </p>
     <ul class="mt-3 flex gap-2 text-sm flex-wrap">
       <li class="px-3 py-1 border rounded bg-sky-100">Тренировки: 3× в неделю</li>
       <li class="px-3 py-1 border rounded bg-sky-100">Позиция: Защитник</li>
-      <li class="px-3 py-1 border rounded bg-sky-100">Любимая команда: Chelsea </li>
+      <li class="px-3 py-1 border rounded bg-sky-100">Любимая команда: Chelsea</li>
     </ul>
+  </section>
+
+  <!-- GAMES: встроенная простая игра -->
+  <section id="games" class="tab-content hidden">
+    <h2 class="text-xl font-semibold text-sky-600 mb-3">Игры (простенькая)</h2>
+    <p class="text-sm text-gray-600 mb-3">Цель: кликай по шарику — набирай очки. Время — 30 секунд. Можно вынести игру в отдельные файлы (ниже дам код).</p>
+
+    <div class="space-y-4">
+      <div class="flex justify-center gap-2">
+        <button id="startBtn" class="btn">Старт</button>
+        <button id="resetBtn" class="btn">Сброс</button>
+        <div class="ml-4 muted">Время: <span id="time">30</span>s</div>
+        <div class="ml-2 muted">Очки: <strong id="score">0</strong></div>
+      </div>
+
+      <div id="gameArea" class="game-area" aria-label="Игровая зона">
+        <!-- цель создаётся скриптом -->
+      </div>
+
+      <p class="text-xs text-gray-500">Если хочешь вынести игру в отдельную страницу — создай папку <code>/games/</code> и добавь файлы <code>game.html</code>, <code>style.css</code>, <code>script.js</code> (внизу даю их код).</p>
+    </div>
+  </section>
+
+  <!-- AI: ищем photo1..photo8 в корне -->
+  <section id="ai" class="tab-content hidden">
+    <h2 class="text-xl font-semibold text-sky-600 mb-3">ИИ — фото</h2>
+    <p class="text-sm text-gray-600 mb-3">Проверяю репозиторий на фото с именами <code>photo1.jpg</code>, <code>photo2.png</code> и т.д. Если файлы есть — показываю галерею.</p>
+
+    <div id="aiArea">
+      <div id="aiStatus" class="text-sm muted">Проверяю файлы...</div>
+      <div id="photos" class="grid-photos mt-3"></div>
+    </div>
   </section>
 
   <footer class="text-center text-gray-500 text-sm mt-6">
@@ -101,9 +141,8 @@
 </main>
 
 <script>
+  // табы
   document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Tabs
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.tab-content');
   tabs.forEach(tab => {
@@ -112,8 +151,145 @@
       tab.classList.add('tab-active');
       contents.forEach(c => c.classList.add('hidden'));
       document.getElementById(tab.dataset.tab).classList.remove('hidden');
+      // special actions on tab open
+      if (tab.dataset.tab === 'ai') loadPhotos();
     });
   });
+
+  // ---------- Игра (встроенная, простая) ----------
+  (function(){
+    const gameArea = document.getElementById('gameArea');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const timeEl = document.getElementById('time');
+    const scoreEl = document.getElementById('score');
+
+    let timer = null;
+    let moveTimer = null;
+    let timeLeft = 30;
+    let score = 0;
+    let target = null;
+    let running = false;
+
+    function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+    function createTarget(){
+      if (target) target.remove();
+      target = document.createElement('div');
+      target.className = 'target';
+      target.textContent = '✦';
+      gameArea.appendChild(target);
+      placeTarget();
+      target.addEventListener('click', () => {
+        if (!running) return;
+        score += 1;
+        scoreEl.textContent = score;
+        target.style.transform = 'scale(1.18)';
+        setTimeout(()=> target.style.transform = 'scale(1)', 120);
+        // быстрее переместить
+        placeTarget();
+      });
+    }
+
+    function placeTarget(){
+      const pad = 12;
+      const area = gameArea.getBoundingClientRect();
+      const maxX = area.width - 56 - pad;
+      const maxY = area.height - 56 - pad;
+      const x = rand(pad, Math.max(pad, Math.floor(maxX)));
+      const y = rand(pad, Math.max(pad, Math.floor(maxY)));
+      target.style.left = x + 'px';
+      target.style.top = y + 'px';
+    }
+
+    function startGame(){
+      if (running) return;
+      running = true;
+      score = 0; timeLeft = 30;
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft;
+      createTarget();
+      moveTimer = setInterval(()=> {
+        if (!running) return;
+        placeTarget();
+      }, 900);
+      timer = setInterval(()=> {
+        timeLeft -= 1;
+        timeEl.textContent = timeLeft;
+        if (timeLeft <= 0){
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame(){
+      running = false;
+      clearInterval(timer); clearInterval(moveTimer);
+      if (target) target.remove();
+      alert('Время вышло! Очки: ' + score);
+    }
+
+    function resetGame(){
+      running = false;
+      clearInterval(timer); clearInterval(moveTimer);
+      timeLeft = 30; score = 0;
+      timeEl.textContent = timeLeft; scoreEl.textContent = score;
+      if (target) target.remove();
+    }
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+    // make area responsive on resize
+    window.addEventListener('resize', ()=> { if (target) placeTarget(); });
+  })();
+
+  // ---------- AI: ищем фото photo1...photo8 (jpg/png/jpeg) ----------
+  async function checkImagePath(path){
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve({ok:true,src:path});
+      img.onerror = () => resolve({ok:false});
+      img.src = path + '?v=' + Date.now(); // bust cache
+    });
+  }
+
+  async function loadPhotos(){
+    const status = document.getElementById('aiStatus');
+    const photosWrap = document.getElementById('photos');
+    photosWrap.innerHTML = '';
+    status.textContent = 'Проверяю файлы...';
+    const found = [];
+    const exts = ['.jpg','.png','.jpeg'];
+    const maxPhotos = 8; // проверяем photo1..photo8
+    for (let i=1;i<=maxPhotos;i++){
+      for (const ext of exts){
+        const path = '/photo' + i + ext;
+        // try relative path first (root)
+        // Note: GitHub Pages serves files from root if added to repo
+        // check
+        // eslint-disable-next-line no-await-in-loop
+        const res = await checkImagePath(path);
+        if (res.ok){ found.push(res.src); break; }
+      }
+    }
+    if (found.length === 0){
+      status.textContent = 'Нету фотографий (файлы photo1..photo8 не найдены в корне репозитория).';
+    } else {
+      status.textContent = 'Найдено ' + found.length + ' фото:';
+      found.forEach(src => {
+        const wrap = document.createElement('div');
+        wrap.className = 'photo-item';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'photo';
+        wrap.appendChild(img);
+        photosWrap.appendChild(wrap);
+      });
+    }
+  }
+
+  // Если пользователь уже открыл вкладку AI — можно запускать при загрузке
+  // (но мы запускаем при клике на таб)
 </script>
 
 </body>
