@@ -1,36 +1,75 @@
 const chatForm = document.getElementById('chat-form');
 const chatInput = document.getElementById('chat-input');
 const chatBox = document.getElementById('chat-box');
+const regenBtn = document.getElementById('regen-btn'); // кнопка "ещё ответ" (если есть)
 
-const OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions";
-const API_KEY = "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";
+// История сообщений
+let chatHistory = [];
 
-chatForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const userMsg = chatInput.value;
-  chatBox.innerHTML += `<p><strong>Ты:</strong> ${userMsg}</p>`;
-  chatInput.value = '';
-  chatBox.innerHTML += `<p><strong>ИИ:</strong> ...загрузка</p>`;
+// Простая NLP-логика: нечувствительно к опечаткам (ignoreCase + упрощённая проверка)
+function match(msg, patterns) {
+  const normalized = msg.toLowerCase().replace(/[^а-яa-z\s]/gi, '');
+  return patterns.some(p => normalized.match(p));
+}
 
-  try {
-    const response = await fetch(OPENROUTER_API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-mini",  // лёгкая англ. модель, немного понимает русский
-        messages: [{ role: "user", content: userMsg }]
-      })
-    });
+// База знаний
+const responses = [
+  { patterns: [/привет/i, /hi/i, /hello/i], replies: ["Привет! 😎","Хай! Как дела?","Здравствуй!","Привет, рад тебя видеть!","Привет! Что нового?"] },
+  { patterns: [/как дела/i, /how are you/i], replies: ["У меня всё отлично! А у тебя?","Всё супер! Как день прошёл?","Нормально, а у тебя?","Отлично! Что делаешь?","Все хорошо, а ты?"] },
+  { patterns: [/что умеешь/i, /what can you do/i], replies: ["Я могу с тобой болтать и отвечать на вопросы!","Могу обсуждать футбол, программирование и игры.","Я учусь понимать сообщения и отвечать на них.","Могу рассказывать про свои мини-проекты.","Я могу быть твоим чат-компаньоном."] },
+  { patterns: [/футбол/i, /football/i], replies: ["Люблю футбол! ⚽ Моя любимая команда — Chelsea.","Футбол крутой! Какую команду любишь?","Тренируюсь 3 раза в неделю.","Могу обсуждать тактику и позиции.","Моя любимая позиция — защитник."] },
+  { patterns: [/программир/i, /code/i, /python/i, /js/i, /node/i], replies: ["Программирование — моё хобби!","Знаю HTML, CSS, JS и немного Python.","Могу помогать с простыми задачами по коду.","Создаю мини-игры на JS и Python.","Люблю учиться новым языкам программирования."] },
+  { patterns: [/игры/i, /games/i], replies: ["Люблю играть в игры! 🕹","Могу рассказать про свои мини-игры на JS и Python.","Какая твоя любимая игра?","Пробую создавать свои маленькие игры.","Я изучаю геймдев на практике."] },
+  { patterns: [/как тебя зовут/i, /who are you/i], replies: ["Я наш школьный ИИ!","Можешь звать меня Чат-ИИ.","Я твой виртуальный собеседник.","Я здесь, чтобы болтать с тобой.","Приятно познакомиться!"] },
+  { patterns: [/пока/i, /bye/i, /exit/i], replies: ["Пока! Было приятно пообщаться.","До встречи!","Прощай!","До скорого!","Увидимся!"] },
+  { patterns: [/спасибо/i, /thanks/i], replies: ["Пожалуйста! 😊","Всегда рад помочь!","Обращайся!","Рад был помочь!","Не за что!"] },
+  { patterns: [/любишь/i, /like/i], replies: ["Я люблю программирование и футбол!","Мне нравятся игры и учебные проекты.","Люблю узнавать новое.","Мне нравится помогать пользователю.","Люблю общение!"] },
+  // Добавь ещё 40+ похожих блоков для разных тем и эмоций
+];
 
-    const data = await response.json();
-    const botMsg = data.choices?.[0]?.message?.content || "Извини, ответа нет";
-    chatBox.innerHTML = chatBox.innerHTML.replace('...загрузка', botMsg);
-  } catch (err) {
-    chatBox.innerHTML = chatBox.innerHTML.replace('...загрузка', 'Ошибка при подключении к ИИ');
+// Получение ответа
+function getReply(msg) {
+  for (let entry of responses) {
+    if (match(msg, entry.patterns)) {
+      // Выбираем случайный ответ
+      return entry.replies[Math.floor(Math.random() * entry.replies.length)];
+    }
   }
+  return "Извини, я пока не знаю, что на это ответить 😅";
+}
 
+// Добавляем сообщение в чат
+function addMessage(author, message) {
+  const msgHTML = `<p><strong>${author}:</strong> ${message}</p>`;
+  chatBox.innerHTML += msgHTML;
   chatBox.scrollTop = chatBox.scrollHeight;
+  chatHistory.push({author, message});
+}
+
+// Отправка сообщения
+chatForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const userMsg = chatInput.value.trim();
+  if (!userMsg) return;
+
+  addMessage("Ты", userMsg);
+  chatInput.value = '';
+  addMessage("ИИ", "...загрузка");
+
+  setTimeout(() => {
+    const botMsg = getReply(userMsg);
+    chatBox.innerHTML = chatBox.innerHTML.replace('<p><strong>ИИ:</strong> ...загрузка</p>', `<p><strong>ИИ:</strong> ${botMsg}</p>`);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 400);
 });
+
+// Кнопка “сгенерировать новый ответ” (если есть)
+if (regenBtn) {
+  regenBtn.addEventListener('click', () => {
+    if (chatHistory.length === 0) return;
+    const lastUser = chatHistory.slice().reverse().find(m => m.author === "Ты");
+    if (!lastUser) return;
+    const newReply = getReply(lastUser.message);
+    addMessage("ИИ", newReply);
+  });
+}
