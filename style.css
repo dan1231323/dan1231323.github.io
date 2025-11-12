@@ -1,0 +1,9 @@
+body { 
+  background: linear-gradient(180deg,#f0f9ff 0%,#e0f2fe 100%); 
+  font-family: "Inter", sans-serif; 
+}
+.fade-in { animation: fade 0.8s ease-in-out; }
+@keyframes fade { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+.tab { cursor:pointer; padding:.5rem 1rem; border-radius:.5rem; transition:.2s; }
+.tab-active { background:#0284c7; color:white; }
+.skill-bar { height:12px; border-radius:999px; background:linear-gradient(90deg,#06b6d4,#2563eb); }
