@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catch the dot — простая игра</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main style="max-width:600px;margin:24px auto;text-align:center;font-family:Inter,system-ui,Arial;">
+    <h1>Кликни шарик — набирай очки</h1>
+    <div style="margin-bottom:12px;">
+      <button id="start" class="btn">Старт</button>
+      <button id="reset" class="btn">Сброс</button>
+      <span style="margin-left:12px">Время: <span id="time">30</span>s</span>
+      <span style="margin-left:8px">Очки: <strong id="score">0</strong></span>
+    </div>
+    <div id="area" class="game-area" aria-label="Игровая зона"></div>
+    <p style="font-size:13px;color:#64748b;margin-top:10px">Игра хранится в /games — можешь править код.</p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
