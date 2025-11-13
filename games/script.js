@@ -1,106 +1,55 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+// script.js — простые мини-игры: Угадай число и Тест реакции
+document.addEventListener('DOMContentLoaded', function(){
+  // Угадай число
+  const startGuessBtn = document.getElementById('start-guess');
+  const guessArea = document.getElementById('guess-area');
+  let secret = null, attempts = 0;
 
-let x = 140, y = 140, size = 20, speed = 4;
-let score = 0, combo = 1, timer = 0;
-
-// создаем цель
-let target = {
-  x: Math.random() * (canvas.width - size),
-  y: Math.random() * (canvas.height - size),
-  size: 20,
-  color: 'red'
-};
-
-// создаем препятствия
-const obstacles = [];
-for(let i = 0; i < 5; i++){
-  obstacles.push({
-    x: Math.random() * (canvas.width - 30),
-    y: Math.random() * (canvas.height - 30),
-    width: 30,
-    height: 30,
-    color: 'grey'
-  });
-}
-
-// клавиши
-const keys = {};
-document.addEventListener('keydown', e => keys[e.key] = true);
-document.addEventListener('keyup', e => keys[e.key] = false);
-
-function update() {
-  // движение
-  if(keys['ArrowUp']) y -= speed;
-  if(keys['ArrowDown']) y += speed;
-  if(keys['ArrowLeft']) x -= speed;
-  if(keys['ArrowRight']) x += speed;
-
-  // границы
-  if(x < 0) x = 0;
-  if(y < 0) y = 0;
-  if(x + size > canvas.width) x = canvas.width - size;
-  if(y + size > canvas.height) y = canvas.height - size;
-
-  // проверка съедения цели
-  if(x < target.x + target.size &&
-     x + size > target.x &&
-     y < target.y + target.size &&
-     y + size > target.y) {
-       score += 1 * combo;
-       combo++;
-       timer = 0; // сброс таймера для комбо
-       // случайная новая цель
-       target.x = Math.random() * (canvas.width - size);
-       target.y = Math.random() * (canvas.height - size);
-  } else {
-      timer++;
-      if(timer > 100) combo = 1; // комбо сбрасывается
+  function startGuessGame(){
+    secret = Math.floor(Math.random() * 100) + 1;
+    attempts = 0;
+    guessArea.innerHTML = '<p>Загадано число от 1 до 100. Введите ваш вариант:</p><input id="guess-input" type="number" min="1" max="100" /><button id="guess-send" class="button-ghost">Проверить</button><div id="guess-log"></div>';
+    document.getElementById('guess-send').addEventListener('click', checkGuess);
+    document.getElementById('guess-input').addEventListener('keydown', function(e){ if(e.key==='Enter') checkGuess(); });
   }
 
-  // проверка столкновения с препятствиями
-  for(let obs of obstacles){
-    if(x < obs.x + obs.width &&
-       x + size > obs.x &&
-       y < obs.y + obs.height &&
-       y + size > obs.y) {
-         // сброс позиции при столкновении
-         x = 50;
-         y = 50;
-         score = Math.max(0, score - 2);
-         combo = 1;
+  function checkGuess(){
+    const v = Number(document.getElementById('guess-input').value);
+    const log = document.getElementById('guess-log');
+    if(!v || v < 1 || v > 100){ log.innerHTML = '<p>Введите число от 1 до 100.</p>'; return; }
+    attempts++;
+    if(v === secret){
+      log.innerHTML = '<p>Верно! Вы угадали за ' + attempts + ' попыток.</p>';
+    } else if(v < secret){
+      log.innerHTML = '<p>Загаданное число больше.</p>';
+    } else {
+      log.innerHTML = '<p>Загаданное число меньше.</p>';
     }
   }
 
-  // ускорение со временем
-  if(score % 5 === 0 && score > 0) speed = 4 + Math.min(score/5, 8);
+  startGuessBtn && startGuessBtn.addEventListener('click', startGuessGame);
 
-  draw();
-  requestAnimationFrame(update);
-}
+  // Тест реакции
+  const startReactionBtn = document.getElementById('start-reaction');
+  const reactionArea = document.getElementById('reaction-area');
+  let reactionTimeout = null, startTime = null;
 
-function draw() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // игрок
-  ctx.fillStyle = `rgb(${50 + score*5 % 205}, 100, 200)`;
-  ctx.fillRect(x, y, size, size);
-
-  // цель
-  ctx.fillStyle = target.color;
-  ctx.fillRect(target.x, target.y, target.size, target.size);
-
-  // препятствия
-  for(let obs of obstacles){
-    ctx.fillStyle = obs.color;
-    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+  function startReactionTest(){
+    reactionArea.innerHTML = '<p>Подождите... сигнал появится случайно.</p>';
+    reactionArea.style.cursor = 'default';
+    const delay = 1000 + Math.random() * 3000;
+    reactionTimeout = setTimeout(() => {
+      reactionArea.innerHTML = '<button id="react-btn" class="cta">ЖМИ!</button>';
+      startTime = performance.now();
+      document.getElementById('react-btn').addEventListener('click', recordReaction);
+    }, delay);
   }
 
-  // счет и комбо
-  ctx.fillStyle = 'black';
-  ctx.font = '20px Arial';
-  ctx.fillText('Score: ' + score, 10, 25);
-  if(combo > 1) ctx.fillText('Combo: x' + combo, 10, 50);
-}
+  function recordReaction(){
+    const dt = performance.now() - startTime;
+    reactionArea.innerHTML = '<p>Ваша реакция: ' + Math.round(dt) + ' мс</p><button id="again" class="button-ghost">Ещё раз</button>';
+    document.getElementById('again').addEventListener('click', startReactionTest);
+  }
 
-update();
+  startReactionBtn && startReactionBtn.addEventListener('click', startReactionTest);
+});
