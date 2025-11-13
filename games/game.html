@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Игры | DAN1231323</title>
+  <link rel="stylesheet" href="/assets/css/improved.css">
+  <style>
+    body {
+      background: linear-gradient(180deg, #0a0a0a, #121212);
+      color: #f0f0f0;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      overflow-x: hidden;
+      animation: fadeIn 1s ease;
+    }
+
+    h1 {
+      font-size: 2.3em;
+      color: #7cc6ff;
+      margin-top: 30px;
+      text-shadow: 0 0 10px rgba(124, 198, 255, 0.6);
+    }
+
+    .game-container {
+      margin-top: 30px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      border: 2px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(124, 198, 255, 0.3);
+      margin-top: 15px;
+      background: #000;
+    }
+
+    .info {
+      color: #aaa;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Игровая зона</h1>
+  <div class="game-container">
+    <p class="info">Выберите игру или начните играть прямо сейчас!</p>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+  </div>
+
+  <!-- Подключаем твой основной JS -->
+  <script src="/games/script.js"></script>
+</body>
+</html>
