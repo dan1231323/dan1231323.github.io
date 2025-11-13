@@ -1,0 +1,52 @@
+// enhance.js — анимации при скролле + локальный ИИ-виджет (без внешних запросов)
+document.addEventListener('DOMContentLoaded', function(){
+  // IntersectionObserver reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting) e.target.classList.add('fade-up');
+    });
+  }, {threshold: 0.12});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // AI widget
+  const toggle = document.createElement('button');
+  toggle.className = 'ai-widget-toggle';
+  toggle.innerText = 'AI';
+  document.body.appendChild(toggle);
+
+  const widget = document.createElement('div');
+  widget.className = 'ai-widget';
+  widget.innerHTML = '<div class="ai-header">Помощник сайта</div><div class="ai-body" id="ai-body"><div class="ai-message">Привет! Я локальный помощник. Попробуй: "о себе", "что на сайте", "игры".</div></div><div class="ai-input"><input id="ai-input" placeholder="Напиши вопрос..." /><button id="ai-send" class="button-ghost">→</button></div>';
+  document.body.appendChild(widget);
+
+  toggle.addEventListener('click', () => {
+    widget.style.display = widget.style.display === 'flex' ? 'none' : 'flex';
+  });
+
+  function appendMessage(text, isUser){
+    const body = document.getElementById('ai-body');
+    const d = document.createElement('div');
+    d.className = 'ai-message' + (isUser ? ' user' : '');
+    d.innerText = text;
+    body.appendChild(d);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  document.getElementById('ai-send').addEventListener('click', () => {
+    const inp = document.getElementById('ai-input');
+    const q = (inp.value || '').trim().toLowerCase();
+    if(!q) return;
+    appendMessage(inp.value, true);
+    let ans = 'Извини, не понимаю. Попробуй: "о себе", "что на сайте", "игры", "как улучшить".';
+    if(q.includes('о себе') || q.includes('обо мне')) ans = 'Это школьный личный сайт. Здесь проекты, учебные работы и игры автора.';
+    else if(q.includes('что на сайте') || q.includes('что делает')) ans = 'На сайте есть страницы: Главная — описание, Игры — несколько мини-игр, и демонстрации проектов.';
+    else if(q.includes('игр') || q.includes('игра')) ans = 'В разделе Игры есть "Угадай число" и "Тест реакции". Попробуй их!';
+    else if(q.includes('как улучшить')) ans = 'Добавь больше проектов, описаний и интерактивных демо. Можно включить презентацию работ и отчёты.';
+    setTimeout(() => appendMessage(ans, false), 500);
+    inp.value = '';
+  });
+
+  document.getElementById('ai-input').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') document.getElementById('ai-send').click();
+  });
+});
