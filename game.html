@@ -1,63 +1,174 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Игры | DAN1231323</title>
-  <link rel="stylesheet" href="/assets/css/improved.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Лабиринт — dan1231323</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(180deg, #0a0a0a, #121212);
-      color: #f0f0f0;
-      font-family: "Poppins", sans-serif;
+      background-color: #111827;
+      color: white;
       text-align: center;
-      overflow-x: hidden;
-      animation: fadeIn 1s ease;
+      font-family: sans-serif;
     }
-
-    h1 {
-      font-size: 2.3em;
-      color: #7cc6ff;
-      margin-top: 30px;
-      text-shadow: 0 0 10px rgba(124, 198, 255, 0.6);
-    }
-
-    .game-container {
-      margin-top: 30px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     canvas {
-      border: 2px solid #333;
+      border: 4px solid #374151;
       border-radius: 12px;
-      box-shadow: 0 0 25px rgba(124, 198, 255, 0.3);
-      margin-top: 15px;
-      background: #000;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+      background: black;
     }
-
-    .info {
-      color: #aaa;
-      font-size: 1rem;
-      margin-top: 10px;
+    button {
+      transition: all 0.2s ease-in-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+    button:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <h1>🎮 Игровая зона</h1>
-  <div class="game-container">
-    <p class="info">Выберите игру или начните играть прямо сейчас!</p>
-    <canvas id="gameCanvas" width="800" height="500"></canvas>
+  <div class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div class="mb-4">
+      <h1 class="text-3xl font-bold mb-2">3D Лабиринт</h1>
+      <div id="time" class="text-yellow-400 text-xl">Время: 0.0с</div>
+      <div class="text-gray-300 text-sm mt-2">
+        Управление: W A S D | Цель: найдите жёлтый финиш
+      </div>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="winScreen" class="hidden mt-6 text-center">
+      <div class="text-4xl font-bold text-yellow-400 mb-4">
+        🎉 Победа! 🎉
+      </div>
+      <div id="finalTime" class="text-2xl mb-4"></div>
+      <button
+        id="restartBtn"
+        class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg"
+      >
+        Играть снова
+      </button>
+    </div>
+
+    <div class="mt-4 text-gray-400 text-sm">
+      💡 Совет: серые стены — обычные, жёлтые — финиш
+    </div>
   </div>
 
-  <!-- Подключаем твой основной JS -->
-  <script src="/games/script.js"></script>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const timeEl = document.getElementById("time");
+    const winScreen = document.getElementById("winScreen");
+    const finalTime = document.getElementById("finalTime");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const maze = [
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,0,0,0,1],
+      [1,0,1,0,1,0,1,1,0,1],
+      [1,0,1,0,0,0,0,1,0,1],
+      [1,0,1,1,1,1,0,1,0,1],
+      [1,0,0,0,0,0,0,1,0,1],
+      [1,1,1,0,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,0,1],
+      [1,0,1,1,1,1,1,1,2,1],
+      [1,1,1,1,1,1,1,1,1,1],
+    ];
+
+    let player, keys, startTime, animationId, gameOver = false;
+
+    function resetGame() {
+      player = { x: 1.5, y: 1.5, angle: 0, speed: 0.05, rotSpeed: 0.05 };
+      keys = {};
+      startTime = Date.now();
+      gameOver = false;
+      winScreen.classList.add("hidden");
+      loop();
+    }
+
+    function checkCollision(x, y) {
+      const mapX = Math.floor(x), mapY = Math.floor(y);
+      return maze[mapY][mapX] === 1;
+    }
+
+    function checkFinish(x, y) {
+      const mapX = Math.floor(x), mapY = Math.floor(y);
+      return maze[mapY][mapX] === 2;
+    }
+
+    function castRay(angle) {
+      const sin = Math.sin(angle), cos = Math.cos(angle);
+      let dist = 0;
+      while (dist < 20) {
+        dist += 0.1;
+        const x = player.x + cos * dist;
+        const y = player.y + sin * dist;
+        const mapX = Math.floor(x), mapY = Math.floor(y);
+        if (maze[mapY][mapX] === 1) return { dist, isFinish: false };
+        if (maze[mapY][mapX] === 2) return { dist, isFinish: true };
+      }
+      return { dist: 20, isFinish: false };
+    }
+
+    function loop() {
+      if (gameOver) return;
+
+      timeEl.textContent = `Время: ${((Date.now() - startTime) / 1000).toFixed(1)}с`;
+
+      if (keys["w"]) {
+        const nx = player.x + Math.cos(player.angle) * player.speed;
+        const ny = player.y + Math.sin(player.angle) * player.speed;
+        if (!checkCollision(nx, ny)) { player.x = nx; player.y = ny; }
+      }
+      if (keys["s"]) {
+        const nx = player.x - Math.cos(player.angle) * player.speed;
+        const ny = player.y - Math.sin(player.angle) * player.speed;
+        if (!checkCollision(nx, ny)) { player.x = nx; player.y = ny; }
+      }
+      if (keys["a"]) player.angle -= player.rotSpeed;
+      if (keys["d"]) player.angle += player.rotSpeed;
+
+      if (checkFinish(player.x, player.y)) {
+        gameOver = true;
+        cancelAnimationFrame(animationId);
+        finalTime.textContent = `Ваше время: ${((Date.now() - startTime) / 1000).toFixed(1)}с`;
+        winScreen.classList.remove("hidden");
+        return;
+      }
+
+      // Рендер
+      ctx.fillStyle = "#87CEEB";
+      ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+      ctx.fillStyle = "#2d2d2d";
+      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+
+      const numRays = 120;
+      const fov = Math.PI / 3;
+
+      for (let i = 0; i < numRays; i++) {
+        const rayAngle = player.angle - fov / 2 + (fov * i) / numRays;
+        const { dist, isFinish } = castRay(rayAngle);
+        const corrected = dist * Math.cos(rayAngle - player.angle);
+        const wallHeight = (canvas.height / corrected) * 0.6;
+        const brightness = Math.max(50, 255 - dist * 30);
+        ctx.fillStyle = isFinish
+          ? `rgb(${brightness}, ${brightness * 0.8}, ${brightness * 0.2})`
+          : `rgb(${brightness * 0.5}, ${brightness * 0.5}, ${brightness * 0.5})`;
+        const x = (i * canvas.width) / numRays;
+        const y = (canvas.height - wallHeight) / 2;
+        ctx.fillRect(x, y, canvas.width / numRays + 1, wallHeight);
+      }
+
+      animationId = requestAnimationFrame(loop);
+    }
+
+    window.addEventListener("keydown", e => (keys[e.key.toLowerCase()] = true));
+    window.addEventListener("keyup", e => (keys[e.key.toLowerCase()] = false));
+    restartBtn.addEventListener("click", resetGame);
+
+    resetGame();
+  </script>
 </body>
 </html>
